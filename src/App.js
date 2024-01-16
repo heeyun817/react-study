@@ -1,5 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
+import {useState} from 'react'; //state 사용
+
 function Header(props){ //사용자 정의 태그(컴포넌트)를 만들 때는 반드시 대문자로 시작해야함
   console.log('props',props, props.title); //props에 객체가 들어옴
   return <header>
@@ -16,7 +18,7 @@ function Nav(props){
     lis.push(<li key={t.id}>
       <a id={t.id} href={'/read/'+t.id} onClick={event=>{
         event.preventDefault();
-        props.onChangeMode(event.target.id); //target : event를 유발 시킨 태그를 가리킴
+        props.onChangeMode(Number(event.target.id)); //target : event를 유발 시킨 태그를 가리킴
       }}>{t.title}</a>
       </li>); //동적으로 만든 각 태그들은 key라는 prop을 가져야하고, key라는 prop은 각 반복문 안에서 유니크해야함
   }
@@ -33,22 +35,43 @@ function Article(props){
 </article>
 }
 function App() {
+  const [mode, setMode] = useState('WELCOME');
+  const [id, setId] = useState(null);
   const topics = [
     {id:1, title:'html', body:'html is ...'},
     {id:2, title:'css', body:'css is ...'},
     {id:3, title:'javascript', body:'javascript is ...'}
   ]
+  let content = null;
+  if(mode === 'WELCOME'){
+    content = <Article title="Welcome" body="Hello, WEB"></Article>
+  } else if(mode === 'READ'){
+    let title, body = null;
+    for(let i=0; i<topics.length; i++){
+      console.log(topics[i].id, id);
+      if(topics[i].id === id){
+        title = topics[i].title;
+        body = topics[i].body;
+      }
+    }
+    content = <Article title={title} body={body}></Article>
+  }
+
   return (
     <div>
       <Header title="WEB" onChangeMode={()=>{ 
-        alert('Header');
+        setMode('WELCOME');
       }}></Header>
-      <Nav topics={topics} onChangeMode={(id)=>{
-        alert(id);
+      <Nav topics={topics} onChangeMode={(_id)=>{
+        setMode('READ');
+        setId(_id);
       }}></Nav>
-      <Article title="Welcome" body="Hello, WEB"></Article>
+      {content}
     </div>
   );
 }
+
+// prop은 컴포넌트를 사용하는 외부자를 위한 데이터
+// state는 컴포넌트를 만드는 내부자를 위한 데이터
 
 export default App;
