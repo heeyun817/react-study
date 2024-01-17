@@ -84,7 +84,7 @@ function App() {
   let contextControl = null;
   if(mode === 'WELCOME'){
     content = <Article title="Welcome" body="Hello, WEB"></Article>
-  } else if(mode === 'READ'){
+  } else if(mode === 'READ'){ 
     let title, body = null;
     for(let i=0; i<topics.length; i++){
       console.log(topics[i].id, id);
@@ -94,10 +94,22 @@ function App() {
       }
     }
     content = <Article title={title} body={body}></Article>
-    contextControl = <li><a href={'/update/'+id} onClick={event=>{
+    contextControl = <> {/*그냥 복수의 태그를 grouping하는 용도*/} 
+    <li><a href={'/update/'+id} onClick={event=>{
       event.preventDefault();
       setMode('UPDATE');
-    }}>Update</a></li> //mode가 READ일때만 보임
+    }}>Update</a></li> 
+    <li><input type="button" value="Delete" onClick={()=>{
+      const newTopics = []
+      for(let i=0; i<topics.length; i++){
+        if(topics[i].id !== id){
+          newTopics.push(topics[i]);
+        }
+      }
+      setTopics(newTopics);
+      setMode('WELCOME');
+    }}/></li>
+    </> 
   } else if(mode === 'CREATE'){
     content = <Create onCreate={(_title, _body)=>{
       const newTopic = {id:nextId,title:_title, body:_body}
